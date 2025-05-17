@@ -27,14 +27,14 @@ Essa solução permite ao cliente agendar cortes, barbas e outros serviços com 
 ![Mobile](imagem/Mobile.png)
 
 
-### 🖥️ Frontend 
+### 💻 Frontend 
 - React.js
 - Redux
 - JavaScript
 - HTML5
 - CSS3
 
-### 🛠️ Backend 
+### 🛠  Backend 
 - Node.js
 - Express
 - MongoDB (Mongoose)
