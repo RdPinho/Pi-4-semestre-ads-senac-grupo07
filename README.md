@@ -43,3 +43,33 @@ Essa solução permite ao cliente agendar cortes, barbas e outros serviços com 
 ### Utilitários
 - Protótipo – Figma
 - Editor -Visual Studio Code
+
+
+## 🧪 Evidências de Testes dos Endpoints (Postman)
+
+### Cadastrar usuário
+![Cadastrar usuário](backend/evidencias/cadastro-usuario.png)
+
+### Login
+![Login](backend/evidencias/login.png)
+
+### Cadastro barbeiro
+![Cadastro barbeiro](backend/evidencias/cadastro-barbeiro.png)
+
+### Criar Agendamento
+![Criar Agendamento](backend/evidencias/agendamentos.png)
+
+### Listar Todos os Agendamentos
+![Listar Todos](backend/evidencias/agendamentos-todos.png)
+
+
+## 🧪 Evidências dos dados no MongoDB
+
+### Banco de dados
+![Barbeiros](backend/evidencias/db-barbearia.png)
+
+### Usuários
+![Usuários](backend/evidencias/db-usuarios.png)
+
+### Agendamentos
+![Agendamentos](backend/evidencias/db-appointments.png)
