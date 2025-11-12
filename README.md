@@ -13,7 +13,7 @@ Essa solução permite ao cliente agendar cortes, barbas e outros serviços com 
 - Estevão Menezes Martin Moraes
 - Fernanda Tomita Manchon
 - Marcus Vinicius Raduan Boriola
-- Rayane
+- Rayane Souza
 - Rodrigo de Pinho
 
 ## Preparação do Ambiente de Desenvolvimento

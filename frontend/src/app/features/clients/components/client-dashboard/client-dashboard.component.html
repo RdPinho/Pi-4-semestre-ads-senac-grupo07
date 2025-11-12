@@ -1,0 +1,170 @@
+<div class="page-layout">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">Dashboard Cliente</h1>
+      <p class="text-muted">Gerencie seus agendamentos e serviços</p>
+    </div>
+    <div class="header-right">
+      <button class="btn-primary" (click)="showBookingModal = true">
+        <i class="material-icons">add</i>
+        Agendar Serviço
+      </button>
+    </div>
+  </div>
+
+  <!-- Seu Resumo (collapsible) -->
+  <div class="section">
+    <div class="section-header">
+      <h2 class="section-title">Seu Resumo</h2>
+      <button class="btn-ghost" (click)="showSummary = !showSummary">
+        <i class="material-icons">{{ showSummary ? 'expand_less' : 'expand_more' }}</i>
+        {{ showSummary ? 'Ocultar' : 'Mostrar' }}
+      </button>
+    </div>
+    
+    <div class="stats-grid" *ngIf="showSummary">
+      <div class="stat-card primary">
+        <i class="material-icons">event</i>
+        <div class="stat-content">
+          <div class="stat-value">{{ upcomingAppointments.length }}</div>
+          <div class="stat-label">Próximos</div>
+        </div>
+      </div>
+      <div class="stat-card success">
+        <i class="material-icons">check_circle</i>
+        <div class="stat-content">
+          <div class="stat-value">{{ completedAppointments.length }}</div>
+          <div class="stat-label">Concluídos</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <i class="material-icons">attach_money</i>
+        <div class="stat-content">
+          <div class="stat-value">R$ {{ totalSpent.toFixed(2) }}</div>
+          <div class="stat-label">Total Gasto</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Agendamentos -->
+  <div class="section">
+    <div class="section-header">
+      <h2 class="section-title">Agendamentos</h2>
+      <button class="btn-ghost" *ngIf="allAppointments.length > 5" (click)="showAllAppointments = !showAllAppointments">
+        <i class="material-icons">{{ showAllAppointments ? 'expand_less' : 'expand_more' }}</i>
+        {{ showAllAppointments ? 'Mostrar Menos' : 'Ver Todos' }}
+      </button>
+    </div>
+    
+    <div class="appointments-list" *ngIf="allAppointments.length > 0; else noAppointments">
+      <div class="appointment-item" 
+           *ngFor="let appointment of (showAllAppointments ? allAppointments : allAppointments.slice(0, 5))"
+           [class.completed]="appointment.status === AppointmentStatus.COMPLETED"
+           [class.cancelled]="appointment.status === AppointmentStatus.CANCELED"
+           [class.upcoming]="appointment.status === AppointmentStatus.SCHEDULED || appointment.status === AppointmentStatus.CONFIRMED">
+        
+        <div class="appointment-info">
+          <div class="appointment-date-small">
+            <i class="material-icons">event</i>
+            {{ formatAppointmentDate(appointment) }}
+          </div>
+          
+          <div class="professional-info" *ngIf="appointment.professionalName">
+            <i class="material-icons">person</i>
+            <span>{{ appointment.professionalName }}</span>
+          </div>
+          
+          <div class="services-summary">
+            <span *ngFor="let service of appointment.services; let last = last">
+              {{ service.serviceName }}<span *ngIf="!last">, </span>
+            </span>
+          </div>
+          
+          <div class="appointment-price">
+            R$ {{ (appointment.totalPrice || 0).toFixed(2) }}
+          </div>
+        </div>
+        
+        <div class="appointment-actions-status">
+          <div class="appointment-status" 
+               [class]="'status-' + appointment.status.toLowerCase()">
+            {{ getStatusLabel(appointment.status) }}
+          </div>
+          
+          <div class="appointment-actions">
+            <button class="btn-secondary-small" 
+                    *ngIf="appointment.status === AppointmentStatus.SCHEDULED"
+                    (click)="editAppointment(appointment)">
+              <i class="material-icons">edit</i>
+              Editar
+            </button>
+            <button class="btn-danger-small" 
+                    *ngIf="appointment.status === AppointmentStatus.SCHEDULED || appointment.status === AppointmentStatus.CONFIRMED"
+                    (click)="cancelAppointment(appointment)">
+              <i class="material-icons">cancel</i>
+              Cancelar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noAppointments>
+      <div class="empty-state">
+        <i class="material-icons">event_busy</i>
+        <h3>Nenhum agendamento</h3>
+        <p>Você ainda não tem agendamentos.</p>
+        <button class="btn-primary" (click)="showBookingModal = true">
+          Fazer Primeiro Agendamento
+        </button>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Serviços Preferenciais -->
+  <div class="section">
+    <div class="section-header">
+      <h2 class="section-title">Serviços Preferenciais</h2>
+      <p class="text-muted">Seus serviços mais utilizados</p>
+    </div>
+    
+    <div class="preferred-services-grid" *ngIf="preferredServices.length > 0; else noPreferredServices">
+      <div class="service-card-compact" *ngFor="let service of preferredServices" (click)="quickBookService(service)">
+        <div class="service-icon">
+          <i class="material-icons">{{ getServiceIcon(service.nome) }}</i>
+        </div>
+        <div class="service-info-compact">
+          <h4 class="service-name">{{ service.nome }}</h4>
+          <div class="service-details">
+            <span class="service-price">R$ {{ service.preco }}</span>
+            <span class="service-duration">{{ service.duracaoMinutos }}min</span>
+          </div>
+          <div class="service-usage" *ngIf="service.usageCount">
+            <i class="material-icons">bar_chart</i>
+            <span>{{ service.usageCount }}x usado</span>
+          </div>
+        </div>
+        <button class="btn-icon-primary">
+          <i class="material-icons">add</i>
+        </button>
+      </div>
+    </div>
+
+    <ng-template #noPreferredServices>
+      <div class="empty-state-small">
+        <i class="material-icons">trending_up</i>
+        <p>Seus serviços mais utilizados aparecerão aqui após alguns agendamentos.</p>
+      </div>
+    </ng-template>
+  </div>
+</div>
+
+<!-- Booking Modal -->
+<app-appointment-booking 
+  *ngIf="showBookingModal"
+  [preSelectedService]="selectedServiceForBooking"
+  (bookingCompleted)="onBookingCompleted()"
+  (bookingCanceled)="onBookingCanceled()">
+</app-appointment-booking>

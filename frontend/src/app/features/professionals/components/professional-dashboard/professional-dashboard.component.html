@@ -1,0 +1,379 @@
+<div class="page-layout">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">Dashboard Profissional</h1>
+      <p class="text-muted">Gerencie seus agendamentos e serviços</p>
+    </div>
+    <div class="header-right">
+      <button class="btn-secondary" (click)="openServiceModal()">
+        <i class="material-icons">settings</i>
+        Gerenciar Serviços
+      </button>
+    </div>
+  </div>
+
+  <!-- Seu Resumo (collapsible) -->
+  <div class="section">
+    <div class="section-header">
+      <h2 class="section-title">Seu Resumo</h2>
+      <button class="btn-ghost" (click)="showSummary = !showSummary">
+        <i class="material-icons">{{ showSummary ? 'expand_less' : 'expand_more' }}</i>
+        {{ showSummary ? 'Ocultar' : 'Mostrar' }}
+      </button>
+    </div>
+    
+    <div class="stats-grid" *ngIf="showSummary">
+      <div class="stat-card primary">
+        <i class="material-icons">today</i>
+        <div class="stat-content">
+          <div class="stat-value">{{ professionalStats.todayAppointments }}</div>
+          <div class="stat-label">Hoje</div>
+        </div>
+      </div>
+      <div class="stat-card success">
+        <i class="material-icons">event_available</i>
+        <div class="stat-content">
+          <div class="stat-value">{{ professionalStats.weekAppointments }}</div>
+          <div class="stat-label">Esta Semana</div>
+        </div>
+      </div>
+      <div class="stat-card warning">
+        <i class="material-icons">attach_money</i>
+        <div class="stat-content">
+          <div class="stat-value">R$ {{ professionalStats.monthRevenue }}</div>
+          <div class="stat-label">Receita do Mês</div>
+        </div>
+      </div>
+      <div class="stat-card info">
+        <i class="material-icons">star</i>
+        <div class="stat-content">
+          <div class="stat-value">{{ professionalStats.averageRating }}</div>
+          <div class="stat-label">Avaliação</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Today's Schedule -->
+  <div class="section" *ngIf="!showAllSchedule">
+    <div class="section-header">
+      <div class="section-header-left">
+        <h2 class="section-title">Agenda de Hoje</h2>
+        <div class="section-subtitle">{{ today | date:'fullDate':'pt-BR' }}</div>
+      </div>
+      <button class="btn-primary" (click)="showAllSchedule = true">
+        <i class="material-icons">schedule</i>
+        Agenda Completa
+      </button>
+    </div>
+    
+    <div class="schedule-container" *ngIf="todayAppointments.length > 0; else noAppointmentsToday">
+      <div class="appointment-timeline">
+        <div class="appointment-item" 
+             *ngFor="let appointment of todayAppointments"
+             [class]="'status-' + appointment.status.toLowerCase()">
+          
+          <div class="appointment-time">
+            <div class="time-display">{{ formatAppointmentTime(appointment) }}</div>
+            <div class="duration">{{ appointment.totalDuration }}min</div>
+          </div>
+          
+          <div class="appointment-details">
+            <div class="client-name">
+              <i class="material-icons">person</i>
+              {{ appointment.clientName || 'Cliente' }}
+            </div>
+            <div class="services-list">
+              <span *ngFor="let service of appointment.services; let last = last">
+                {{ service.serviceName }}<span *ngIf="!last">, </span>
+              </span>
+            </div>
+            <div class="appointment-price">R$ {{ appointment.totalPrice }}</div>
+          </div>
+          
+          <div class="appointment-status">
+            <span class="status-badge" [class]="'status-' + appointment.status.toLowerCase()">
+              {{ getStatusLabel(appointment.status) }}
+            </span>
+          </div>
+          
+          <div class="appointment-actions">
+            <!-- Botão Iniciar - só aparece quando confirmado -->
+            <button class="btn-sm btn-primary" 
+                    *ngIf="appointment.status === AppointmentStatus.CONFIRMED"
+                    (click)="startAppointment(appointment)">
+              <i class="material-icons">play_arrow</i>
+              Iniciar
+            </button>
+            
+            <!-- Botão Finalizar - só aparece quando em andamento -->
+            <button class="btn-sm btn-success" 
+                    *ngIf="appointment.status === AppointmentStatus.IN_PROGRESS"
+                    (click)="completeAppointment(appointment)">
+              <i class="material-icons">check</i>
+              Finalizar
+            </button>
+            
+            <!-- Botão Confirmar - só aparece quando agendado -->
+            <button class="btn-sm btn-success" *ngIf="appointment.status === AppointmentStatus.SCHEDULED" (click)="confirmAppointment(appointment)">
+              <i class="material-icons">check_circle</i>
+              Confirmar
+            </button>
+            
+            <!-- Botão Recusar - só aparece quando pendente/agendado -->
+            <button class="btn-sm btn-danger" 
+                    *ngIf="appointment.status === AppointmentStatus.SCHEDULED"
+                    (click)="cancelAppointment(appointment)">
+              <i class="material-icons">close</i>
+              Recusar
+            </button>
+            
+            <!-- Botão Cancelar - só aparece quando confirmado ou em andamento -->
+            <button class="btn-sm btn-danger" 
+                    *ngIf="appointment.status === AppointmentStatus.CONFIRMED || appointment.status === AppointmentStatus.IN_PROGRESS"
+                    (click)="cancelAppointment(appointment)">
+              <i class="material-icons">cancel</i>
+              Cancelar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noAppointmentsToday>
+      <div class="empty-state">
+        <i class="material-icons">event_available</i>
+        <h3>Nenhum agendamento para hoje</h3>
+        <p>Sua agenda está livre. Aproveite para descansar ou organizar seus serviços!</p>
+      </div>
+    </ng-template>
+
+    <!-- Available Time Slots -->
+    <div class="available-slots" *ngIf="availableTimeSlots.length > 0">
+      <h3>Horários Disponíveis</h3>
+      <div class="time-slots">
+        <button class="time-slot" 
+                *ngFor="let slot of availableTimeSlots"
+                (click)="blockTimeSlot(slot)">
+          {{ slot }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Full Schedule -->
+  <div class="section" *ngIf="showAllSchedule">
+    <div class="section-header">
+      <div class="section-header-left">
+        <h2 class="section-title">Próximos Agendamentos</h2>
+      </div>
+      <button class="btn-ghost" (click)="showAllSchedule = false">
+        <i class="material-icons">today</i>
+        Ver Apenas Hoje
+      </button>
+    </div>
+    
+    <div class="schedule-container" *ngIf="upcomingAppointments.length > 0; else noUpcomingAppointments">
+      <div class="appointment-timeline">
+        <div class="appointment-item" 
+             *ngFor="let appointment of upcomingAppointments"
+             [class]="'status-' + appointment.status.toLowerCase()">
+          
+          <div class="appointment-time">
+            <div class="time-display">{{ formatAppointmentTime(appointment) }}</div>
+            <div class="duration">{{ appointment.totalDuration }}min</div>
+          </div>
+          
+          <div class="appointment-details">
+            <div class="appointment-date">
+              <i class="material-icons">event</i>
+              {{ formatAppointmentDate(appointment) }}
+            </div>
+            <div class="client-name">
+              <i class="material-icons">person</i>
+              {{ appointment.clientName || 'Cliente' }}
+            </div>
+            <div class="services-list">
+              <span *ngFor="let service of appointment.services; let last = last">
+                {{ service.serviceName }}<span *ngIf="!last">, </span>
+              </span>
+            </div>
+            <div class="appointment-price">R$ {{ appointment.totalPrice }}</div>
+          </div>
+          
+          <div class="appointment-status">
+            <span class="status-badge" [class]="'status-' + appointment.status.toLowerCase()">
+              {{ getStatusLabel(appointment.status) }}
+            </span>
+          </div>
+          
+          <div class="appointment-actions">
+            <!-- Botão Confirmar - só aparece quando agendado -->
+            <button class="btn-sm btn-success" *ngIf="appointment.status === AppointmentStatus.SCHEDULED" (click)="confirmAppointment(appointment)">
+              <i class="material-icons">check_circle</i>
+              Confirmar
+            </button>
+            
+            <!-- Botão Recusar - só aparece quando pendente/agendado -->
+            <button class="btn-sm btn-danger" 
+                    *ngIf="appointment.status === AppointmentStatus.SCHEDULED"
+                    (click)="cancelAppointment(appointment)">
+              <i class="material-icons">close</i>
+              Recusar
+            </button>
+            
+            <!-- Botão Cancelar - só aparece quando confirmado -->
+            <button class="btn-sm btn-danger" 
+                    *ngIf="appointment.status === AppointmentStatus.CONFIRMED"
+                    (click)="cancelAppointment(appointment)">
+              <i class="material-icons">cancel</i>
+              Cancelar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noUpcomingAppointments>
+      <div class="empty-state">
+        <i class="material-icons">event_busy</i>
+        <h3>Nenhum agendamento futuro</h3>
+        <p>Seus próximos agendamentos aparecerão aqui.</p>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- My Services -->
+  <div class="section">
+    <div class="section-header">
+      <h2 class="section-title">Meus Serviços</h2>
+      <button class="btn-primary" (click)="openServiceModal()">
+        <i class="material-icons">add</i>
+        Adicionar Serviço
+      </button>
+    </div>
+    
+    <div class="services-grid-compact">
+      <div class="service-card-compact" *ngFor="let service of myServicesSorted">
+        <div class="service-header-compact">
+          <div class="service-icon">
+            <i class="material-icons">{{ getServiceIcon(service.nome) }}</i>
+          </div>
+          <button class="status-toggle" 
+                  [class.active]="service.disponivel !== false"
+                  (click)="toggleServiceStatus(service)">
+            <i class="material-icons">{{ service.disponivel !== false ? 'toggle_on' : 'toggle_off' }}</i>
+          </button>
+        </div>
+        
+        <div class="service-info-compact">
+          <h4 class="service-name">{{ service.nome }}</h4>
+          <p class="service-description">{{ service.descricao }}</p>
+          <div class="service-details">
+            <span class="service-price">R$ {{ service.preco }}</span>
+            <span class="service-duration">{{ service.duracaoMinutos }}min</span>
+          </div>
+          <div class="service-usage" *ngIf="service.usageCount">
+            <i class="material-icons">bar_chart</i>
+            <span>{{ service.usageCount }}x usado</span>
+          </div>
+        </div>
+        
+        <div class="service-actions-compact">
+          <button class="btn-icon-ghost" (click)="editService(service)" title="Editar">
+            <i class="material-icons">edit</i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Performance -->
+  <div class="section">
+    <div class="section-header">
+      <h2 class="section-title">Performance Recente</h2>
+    </div>
+    
+    <div class="performance-grid">
+      <div class="performance-card">
+        <div class="performance-icon">
+          <i class="material-icons">check_circle</i>
+        </div>
+        <div class="performance-info">
+          <h4>Taxa de Conclusão</h4>
+          <div class="performance-value">{{ professionalStats.completionRate }}%</div>
+          <p>Agendamentos concluídos com sucesso</p>
+        </div>
+      </div>
+      
+      <div class="performance-card">
+        <div class="performance-icon">
+          <i class="material-icons">people</i>
+        </div>
+        <div class="performance-info">
+          <h4>Clientes Atendidos</h4>
+          <div class="performance-value">{{ professionalStats.totalClients }}</div>
+          <p>Total de clientes únicos</p>
+        </div>
+      </div>
+      
+      <div class="performance-card">
+        <div class="performance-icon">
+          <i class="material-icons">trending_up</i>
+        </div>
+        <div class="performance-info">
+          <h4>Receita Total</h4>
+          <div class="performance-value">R$ {{ totalRevenue }}</div>
+          <p>Ganhos dos últimos 30 dias</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Service Management Modal -->
+<div class="modal-overlay" *ngIf="showServiceModal" (click)="closeServiceModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Gerenciar Serviços</h3>
+      <button class="btn-ghost" (click)="closeServiceModal()">
+        <i class="material-icons">close</i>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <p class="text-muted">Gerencie seus serviços, preços e disponibilidade.</p>
+      
+      <div class="service-management">
+        <div class="service-item" *ngFor="let service of myServices">
+          <div class="service-basic">
+            <h4>{{ service.nome }}</h4>
+            <p>{{ service.descricao }} - R$ {{ service.preco }}</p>
+          </div>
+          <div class="service-controls">
+            <button class="btn-sm btn-primary" (click)="editService(service)">
+              Editar
+            </button>
+            <button class="btn-sm btn-success"
+                    (click)="toggleServiceStatus(service)">
+              Ativar/Desativar
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <button class="btn-primary w-100 mt-3" (click)="openAddServiceModal(); closeServiceModal()">
+        <i class="material-icons">add</i>
+        Adicionar Novo Serviço
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Service Modal -->
+<app-add-service-modal
+  *ngIf="showAddServiceModal"
+  (serviceAdded)="onServiceAdded()"
+  (cancelled)="closeAddServiceModal()">
+</app-add-service-modal>

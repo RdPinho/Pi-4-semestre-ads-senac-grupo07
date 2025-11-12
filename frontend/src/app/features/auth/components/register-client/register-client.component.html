@@ -1,0 +1,155 @@
+<div class="page-layout">
+  <!-- Background decorativo -->
+  <div class="background-decoration">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+  </div>
+
+  <div class="page-content">
+    <!-- Logo e título -->
+    <div class="brand-section">
+      <div class="brand-logo">
+        <mat-icon>person_add</mat-icon>
+      </div>
+      <h1 class="brand-title">BARBER7</h1>
+      <p class="brand-subtitle">Cadastro de Cliente</p>
+    </div>
+
+    <!-- Card de registro -->
+    <div class="form-card">
+      <div class="form-header">
+        <h2 class="form-title">Criar Conta</h2>
+        <p class="form-subtitle">Preencha os dados para se cadastrar</p>
+      </div>
+
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="form-container">
+        <!-- Nome -->
+        <div class="form-group">
+          <div class="input-wrapper">
+            <input 
+              type="text" 
+              id="nome"
+              formControlName="nome" 
+              placeholder="Nome completo"
+              class="form-input"
+              [class.error]="registerForm.get('nome')?.errors && registerForm.get('nome')?.touched">
+          </div>
+          <div class="error-text" *ngIf="registerForm.get('nome')?.errors && registerForm.get('nome')?.touched">
+            {{ getErrorMessage('nome') }}
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="form-group">
+          <div class="input-wrapper">
+            <input 
+              type="email" 
+              id="email"
+              formControlName="email" 
+              placeholder="E-mail"
+              class="form-input"
+              [class.error]="registerForm.get('email')?.errors && registerForm.get('email')?.touched">
+          </div>
+          <div class="error-text" *ngIf="registerForm.get('email')?.errors && registerForm.get('email')?.touched">
+            {{ getErrorMessage('email') }}
+          </div>
+        </div>
+
+        <!-- Telefone -->
+        <div class="form-group">
+          <div class="input-wrapper">
+            <input 
+              type="tel" 
+              id="telefone"
+              formControlName="telefone" 
+              placeholder="Telefone (00) 00000-0000"
+              class="form-input"
+              (input)="onPhoneInput($event)"
+              maxlength="15"
+              [class.error]="registerForm.get('telefone')?.errors && registerForm.get('telefone')?.touched">
+          </div>
+          <div class="error-text" *ngIf="registerForm.get('telefone')?.errors && registerForm.get('telefone')?.touched">
+            {{ getErrorMessage('telefone') }}
+          </div>
+        </div>
+
+        <!-- Senha -->
+        <div class="form-group">
+          <div class="input-wrapper">
+            <input 
+              [type]="hidePassword ? 'password' : 'text'"
+              id="senha"
+              formControlName="senha" 
+              placeholder="Senha"
+              class="form-input"
+              [class.error]="registerForm.get('senha')?.errors && registerForm.get('senha')?.touched">
+            <button 
+              type="button" 
+              class="toggle-btn"
+              (click)="hidePassword = !hidePassword">
+              <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+          </div>
+          <div class="error-text" *ngIf="registerForm.get('senha')?.errors && registerForm.get('senha')?.touched">
+            {{ getErrorMessage('senha') }}
+          </div>
+        </div>
+
+        <!-- Confirmar Senha -->
+        <div class="form-group">
+          <div class="input-wrapper">
+            <input 
+              [type]="hideConfirmPassword ? 'password' : 'text'"
+              id="confirmPassword"
+              formControlName="confirmPassword" 
+              placeholder="Confirmar senha"
+              class="form-input"
+              [class.error]="(registerForm.get('confirmPassword')?.errors && registerForm.get('confirmPassword')?.touched) || 
+                           (registerForm.errors?.['passwordMismatch'] && registerForm.get('confirmPassword')?.touched)">
+            <button 
+              type="button" 
+              class="toggle-btn"
+              (click)="hideConfirmPassword = !hideConfirmPassword">
+              <mat-icon>{{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+          </div>
+          <div class="error-text" *ngIf="(registerForm.get('confirmPassword')?.errors && registerForm.get('confirmPassword')?.touched) || 
+                                         (registerForm.errors?.['passwordMismatch'] && registerForm.get('confirmPassword')?.touched)">
+            {{ getErrorMessage('confirmPassword') }}
+          </div>
+        </div>
+
+        <!-- Mensagem de erro global -->
+        <div class="message error" *ngIf="errorMessage">
+          <mat-icon>error</mat-icon>
+          <span>{{ errorMessage }}</span>
+        </div>
+
+        <!-- Botão de cadastro -->
+        <button 
+          type="submit" 
+          class="btn w-100"
+          [disabled]="registerForm.invalid || isLoading"
+          [class.loading]="isLoading">
+          <mat-icon *ngIf="isLoading" class="loading-icon">refresh</mat-icon>
+          <span>{{ isLoading ? 'Cadastrando...' : 'Criar Conta' }}</span>
+        </button>
+
+        <!-- Link para login -->
+        <div class="text-center mt-3">
+          <p class="text-muted mb-0">Já tem uma conta? 
+            <a routerLink="/auth/login" class="link">Faça login aqui</a>
+          </p>
+        </div>
+
+        <!-- Link para cadastro de profissional -->
+        <div class="text-center mt-2">
+          <p class="text-muted mb-0">É um profissional? 
+            <a routerLink="/auth/register-professional" class="link">Cadastre-se como profissional</a>
+          </p>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
