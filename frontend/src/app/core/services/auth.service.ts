@@ -136,11 +136,15 @@ export class AuthService {
   }
 
   private setupAutoLogout(): void {
-    window.addEventListener('beforeunload', () => {
-      localStorage.removeItem(this.TOKEN_KEY);
-      localStorage.removeItem(this.USER_KEY);
-      localStorage.removeItem(this.REFRESH_TOKEN_KEY);
-      this.currentUserSubject.next(null);
-    });
+    sessionStorage.setItem('page_loaded', 'true');
+    const isPageClosing = !sessionStorage.getItem('page_loaded');
+    if(isPageClosing) {
+      window.addEventListener('beforeunload', () => {
+        localStorage.removeItem(this.TOKEN_KEY);
+        localStorage.removeItem(this.USER_KEY);
+        localStorage.removeItem(this.REFRESH_TOKEN_KEY);
+        this.currentUserSubject.next(null);
+      });
+    }
   }
 }
