@@ -10,40 +10,53 @@ Essa solução permite ao cliente agendar cortes, barbas e outros serviços com 
 
 ## 👥 Integrantes do Projeto
 
-- Daniela Kaori Tsuruda
 - Estevão Menezes Martin Moraes
 - Fernanda Tomita Manchon
 - Marcus Vinicius Raduan Boriola
+- Rayane
 - Rodrigo de Pinho
 
 ## Preparação do Ambiente de Desenvolvimento
 
 ### 🎨 Layout no Figma
 #### WEB
-![Web](imagem/Web.png)
+![Web](frontend/public/contexto/Web.png)
 
 
 ### MOBILE
-![Mobile](imagem/Mobile.png)
+![Mobile](frontend/public/contexto/Mobile.png)
 
 
 ### 💻 Frontend 
-- React.js
-- Redux
-- JavaScript
-- HTML5
-- CSS3
+- Angular
 
-### 🛠  Backend 
-- Node.js
-- Express
-- MongoDB (Mongoose)
+### Backend
+- [Java 17+](https://adoptium.net/)
+- [Spring Boot 3](https://spring.io/projects/spring-boot)
+- [Spring Data MongoDB](https://spring.io/projects/spring-data-mongodb)
+- [JWT (JSON Web Token)](https://jwt.io/) para autenticação
+- [Maven](https://maven.apache.org/) para gerenciamento de dependências
+
+### Banco de dados
+- [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) — cluster gratuito na nuvem
 
 
 ### Utilitários
 - Protótipo – Figma
 - Editor -Visual Studio Code
 
+---
+
+## 🧠 Estrutura básica do projeto
+
+```
+src/
+ ├── app/
+ ├── frontend/
+ └── test/
+```
+
+---
 
 ## 🧪 Evidências de Testes dos Endpoints (Postman)
 

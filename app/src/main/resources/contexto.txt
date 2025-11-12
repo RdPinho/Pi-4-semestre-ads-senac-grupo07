@@ -1,0 +1,215 @@
+1 - Visão Geral do Produto
+
+Muitas barbearias já contam com uma clientela fiel, pois os homens geralmente mantêm seus barbeiros por longos períodos. Com isso em mente, vamos criar uma plataforma digital, disponível nas versões web e mobile, com o objetivo de facilitar o agendamento de horários, sendo exclusiva para cada barbearia, e não uma plataforma compartilhada por várias. Considerando que a maioria das barbearias já tem uma base de clientes leais, ao chegar no estabelecimento, o cliente encontrará uma placa com um QR Code que o direciona para a plataforma, onde poderá se cadastrar e aproveitar os benefícios oferecidos.
+O objetivo principal é oferecer uma experiência simplificada e eficiente para os clientes que buscam agendar cortes de cabelo, barba ou outros serviços relacionados, facilitando o agendamento sem a necessidade de esperar na fila, realizar ligações ou enviar mensagens de texto. A plataforma oferece autonomia e flexibilidade aos usuários ao permitir que visualizem a disponibilidade da barbearia, escolham o profissional de sua preferência e o horário mais conveniente para eles.
+Além disso, a barbearia necessita de um sistema eficaz para gerenciar a agenda dos profissionais, otimizar os horários e evitar sobrecarga de serviços, além de poder realizar promoções para preencher horários ociosos. O investimento é na comunicação transparente com seus clientes, oferecendo um canal centralizado para comunicações.
+Dessa forma, a plataforma irá oferecer recursos de fidelização, promoções e um meio direto de comunicação com os clientes, contribuindo para uma relação de confiança e excelência no atendimento.
+
+
+2 - Definição das partes interessadas (stakeholders)
+
+As partes interessadas (ou stakeholders) na plataforma de agendamento para barbearias são:
+•	Clientes da Barbearia.
+•	Barbeiros / Profissionais.
+•	Dono/Administrador da barbearia.
+•	Equipe de desenvolvimento.
+Podemos categorizá-los da seguinte forma, Tipo de usuário, Interesses / Necessidade e Expectativas.
+Clientes da Barbearia (Usuário Final).
+•	Facilidade no agendamento e visualização de horários.
+•	Autonomia na escolha do barbeiro.
+•	Notificação e Lembretes.
+•	Programas de fidelização e Promoções.
+•	Pagamento seguro.
+Barbeiros/Profissionais (Usuário Operacional).
+•	Visualização clara de sua própria agenda.
+•	Flexibilidade para ajustes e bloqueios de horários.
+•	Reduções de horários ociosos.
+Administrador da Barbearia (Gestão Interna).
+•	Controle da agenda de todos os profissionais.
+•	Ferramentas para promoções.
+•	Canal direto de comunicação com clientes
+
+Equipe de Desenvolvimento (Técnica)
+•	Requisitos bem definidos.
+•	Responsável por projetar, implementar, testar e manter o sistema.
+•	Feedback constante dos usuários.
+
+3 - Desenvolvimento de personas e jornadas dos usuários
+
+3.1 Personas
+
+
+1.	Pedro Machado
+Perfil
+Pedro é um homem de 32 anos que mora em São Paulo, gosta de praticar esportes, jogar games online, tem um grande interesse por tecnologia e valoriza o tempo com a sua família.
+Ele trabalha como analista de TI em horário comercial e, muitas vezes, tem reuniões e prazos apertados. Investe bastante do seu tempo em networking profissional, participando de eventos e apresentando palestras.
+Pedro preza pela organização do seu tempo e gosta de evitar filas e esperas desnecessárias. Por isso, busca soluções digitais que otimizem suas tarefas diárias.
+Comportamento
+Pedro costuma cortar o cabelo a cada 15 dias e mantém a barba cheia e bem cuidada. Já tem um barbeiro de confiança, mas muitas vezes esquece de marcar horário e acaba tendo que esperar. Está acostumado a utilizar aplicativos para otimizar sua rotina, como bancos digitais, delivery de comida e transporte por aplicativo
+Necessidades
+•	Agendamento rápido e sem complicação: não quer perder tempo ligando ou enviando mensagens de texto para marcar um horário
+•	Autonomia na escolha: deseja ter opções para escolher o horário que melhor se encaixa na sua agenda
+•	Lembretes automáticos: deseja receber notificações para não esquecer do compromisso
+•	Facilidade de pagamento: prefere pagar digitalmente para evitar o uso de dinheiro físico
+
+
+2.	Miguel Cerqueira
+
+Perfil
+Miguel é um homem de 45 anos que mora em Curitiba-PR e a sua paixão é a coleção de carros que vem criando há anos. Aprecia bons restaurantes, gastronomia diversa e bons vinhos.
+Miguel é dono de uma rede de lojas de roupas e tem uma agenda sempre cheia. Ele valoriza uma boa apresentação pessoal, pois participa de muitas reuniões e eventos corporativos.
+Sua rotina agitada inclui muitos jantares e viagens a trabalho e, por conta de seus compromissos, costuma esquecer de marcar horários na barbearia, precisando, muitas vezes, encaixar atendimentos de última hora.
+Comportamento
+Miguel costuma cortar o cabelo a cada 10 dias e mantém a barba sempre aparada e cuida para evitar marcas na pele. Prefere serviços premium e atendimento personalizado, mesmo que o custo seja maior. Miguel é adepto de tecnologia, mas valoriza um atendimento humanizado e diferenciado.
+Necessidades
+•	Agendamento rápido e sem complicação: precisa de um sistema rápido para marcar horários, sem precisar ligar ou trocar mensagens.
+•	Horários exclusivos e lembretes: gosta de receber notificações e ter prioridade no atendimento.
+•	Facilidade de pagamento: prefere pagar digitalmente ou ter a opção de planos de assinatura para serviços recorrentes.
+•	Programa de fidelidade: valoriza benefícios exclusivos para clientes frequentes.
+
+3.2 Jornadas
+
+1. Jornada do Cliente - Agendamento Simples
+Esta jornada descreve as etapas que o cliente segue para agendar um serviço, como corte de cabelo ou outros tratamentos. Torna o processo mais rápido e simples, sem depender de canais tradicionais como telefonemas ou mensagens.
+Passos:
+•	Acesso ao Sistema: O cliente escaneia o QR Code disponível na barbearia, que o redireciona diretamente para a plataforma de agendamento (pode ser web ou mobile).
+•	Cadastro ou Login: Se for a primeira vez do cliente, ele se cadastra com os dados básicos. Caso já tenha conta, ele apenas faz o login.
+•	Escolha do Serviço e Profissional: O cliente seleciona o serviço desejado, como corte de cabelo ou barba, e escolhe o profissional de sua preferência, se houver mais de um disponível.
+•	Seleção de Horário: O sistema apresenta a agenda disponível do profissional, permitindo que o cliente escolha o melhor horário para seu agendamento.
+•	Confirmação do Agendamento: O cliente confirma o agendamento.
+•	Notificação de Confirmação: O cliente recebe um lembrete automático, confirmando a data e o horário agendado.
+•	Lembrete Antecedente: Poucas horas ou um dia antes do compromisso, o cliente recebe um lembrete para garantir que não se esqueça do agendamento.
+
+2. Jornada do Barbeiro / Profissionais - Gerenciamento da Agenda
+Esta jornada descreve como os barbeiros gerenciam os horários e otimizam a utilização da barbearia. Facilita o gerenciamento da agenda, permitindo otimizar a alocação dos horários, assim melhora o atendimento ao cliente.
+Passos:
+•	Acesso à Plataforma: O Barbeiro acessa a plataforma via interface web ou mobile, onde pode visualizar todos os agendamentos.
+•	Visualização da Agenda: A plataforma exibe a agenda facilitando a verificação de disponibilidades e o ajuste de horários, quando necessário.
+•	Notificação de Alterações e Agendamentos: O sistema envia notificações automáticas de confirmações, cancelamentos ou alterações nos agendamentos, mantendo todos atualizados.
+3. Jornada do Administrador (Barbearia) - Gerenciamento da Agenda
+Esta jornada descreve como os administradores gerenciam os horários e otimizam a utilização da barbearia. Facilita o gerenciamento da agenda, permitindo otimizar a alocação dos horários, assim melhora o atendimento ao cliente e aumenta a produtividade da barbearia.
+Passos:
+•	Acesso à Plataforma de Administração: O administrador acessa a plataforma via interface web ou mobile, onde pode visualizar todos os agendamentos.
+•	Visualização da Agenda dos Profissionais: A plataforma exibe a agenda de cada profissional, facilitando a verificação de disponibilidades, o desbloqueio de horários ociosos e o ajuste de horários, quando necessário.
+•	Gestão de Ofertas Especiais: O administrador pode configurar ofertas especiais, como pacotes de serviços ou bônus para agendamentos em horários com menor demanda, estimulando a marcação de serviços durante esses períodos e aumentando a movimentação da barbearia.
+•	Notificação de Alterações e Agendamentos: O sistema envia notificações automáticas de confirmações, cancelamentos ou alterações nos agendamentos, mantendo todos atualizados.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+4 - Protótipo para validar a navegação do produto proposto
+
+Jornada do Cliente
+Esta jornada descreve as etapas que o cliente segue para agendar um serviço, como corte de cabelo ou outros tratamentos. Torna o processo mais rápido e simples, sem depender de canais tradicionais como telefonemas ou mensagens.
+Acesso ao sistema através da tela de login.
+
+Figura 1- Tela Login Mobile.
+
+Fonte- Autoria própria.
+
+
+
+
+
+Figura 2- Tela Login Desktop
+
+Fonte- Autoria própria.
+
+Se for a primeira vez do cliente, ele se cadastra com os dados básicos.
+
+Figura 3- Tela Cadastro Mobile
+
+Fonte- Autoria própria.
+
+
+Figura 4- Tela Cadastro Desktop
+
+Fonte- Autoria própria.
+
+Agendamento, o cliente seleciona o serviço desejado, como corte de cabelo ou barba, e escolhe o profissional de sua preferência o dia e o horário.
+
+Figura 5- Tela Agendamento Mobile.
+
+Fonte- Autoria própria.
+
+
+Figura 6- Tela Agendamento Desktop.
+
+Fonte- Autoria própria.
+
+Jornada do Barbeiro / Administrador
+
+Esta jornada descreve como os administradores gerenciam os horários e otimizam a utilização da barbearia. Facilita o gerenciamento da agenda, permitindo otimizar a alocação dos horários.
+Figura 7- DashBoard.
+
+Fonte- Autoria própria.
+
+5 - Desenvolvimento do Produto Mínimo Viável (MVP)
+(obrigatório)
+
+Um MVP visa fornecer um produto funcional com o mínimo de recursos necessários. Esta é a etapa em que você deve desenvolver o produto de software funcional. Defina as tecnologias e padrões para criar o front-end (ex: HTML, CSS, Javascript, React, Angular, Vue.js etc.) e o back-end (Java EE, PHP, ASP.NET, Node.js, Python etc. da aplicação e faça o desenvolvimento. Defina também o Sistema Gerenciador de Banco de Dados (por exemplo, MySQL, PostgreSQL, MongoDB, Firebase etc.).
+Desenvolvimento do Produto Mínimo Viável (MVP)
+O MVP (Produto Mínimo Viável) tem como objetivo entregar a versão mais simples, porém funcional, da plataforma de agendamento, validando suas principais funcionalidades junto aos usuários finais.
+Objetivo do MVP
+•	Validar a proposta de valor: agendamento digital e simplificado
+•	Reduzir tempo de espera e melhorar a experiência do cliente
+•	Fornecer à barbearia uma ferramenta de organização da agenda e fidelização
+________________________________________
+Funcionalidades Essenciais do MVP
+1.	Cadastro e login de usuários
+2.	Visualização da lista de serviços
+3.	Escolha do profissional (opcional)
+4.	Visualização e seleção de horários disponíveis
+5.	Confirmação do agendamento
+6.	Notificações simples por e-mail ou push
+7.	Interface de administração básica (agenda dos barbeiros, controle de agendamentos)
+________________________________________
+Tecnologias Definidas
+Frontend (Cliente Web e Mobile)
+•	Linguagens: HTML5, CSS3, JavaScript
+•	Framework: React.js (com Redux para gerenciamento de estado)
+•	Bibliotecas auxiliares: Axios (requisições HTTP), React Router (navegação SPA)
+Backend (API REST)
+•	Linguagem: JavaScript
+•	Framework: Node.js com Express.js
+•	Middleware: JWT (autenticação), Cors (controle de origem)
+Banco de Dados
+•	Sistema Gerenciador: MongoDB
+•	Ferramenta de Modelagem: Mongoose
+•	Justificativa: Alta flexibilidade para manipulação de dados semi-estruturados, fácil integração com Node.js
+Hospedagem e Serviços
+•	Backend/API: Render ou Heroku (para prototipagem rápida)
+•	Banco de Dados: MongoDB Atlas (versão cloud)
+•	Frontend: Vercel ou Netlify
+________________________________________
+Arquitetura Geral
+[Frontend (React)] <--> [Backend (Node.js + Express)] <--> [MongoDB]
+________________________________________
+Etapas do Desenvolvimento
+1.	Levantamento de requisitos e criação de wireframes
+2.	Desenvolvimento do frontend:
+•	Telas: login, cadastro, agendamentos, confirmação
+•	Integração com API REST
+3.	Desenvolvimento do backend:
+•	Rotas de autenticação, agendamento e listagem
+•	Lógica de disponibilidade por profissional
+4.	Configuração do banco de dados
+•	Estrutura para usuários, serviços, agendamentos, profissionais
+5.	Testes iniciais
+•	Testes manuais de fluxo completo
+6.	Deploy em ambiente de protótipo
+•	Publicação e testes com usuários reais da barbearia
+7.	Coleta de feedback
