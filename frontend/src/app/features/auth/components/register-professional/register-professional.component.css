@@ -1,0 +1,151 @@
+/* O registro de profissional usa o design system global */
+/* Importa automaticamente todas as classes do design system */
+
+/* Card mais largo para acomodar mais campos */
+.professional-card {
+  max-width: 500px;
+}
+
+/* Seções do formulário */
+.form-section {
+  margin-bottom: var(--spacing-xl);
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 1px solid rgba(255, 107, 53, 0.1);
+}
+
+.form-section:last-of-type {
+  border-bottom: none;
+  margin-bottom: var(--spacing-lg);
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  margin: 0 0 var(--spacing-lg) 0;
+}
+
+.section-title mat-icon {
+  color: var(--primary-color);
+  font-size: 20px;
+}
+
+/* Layout em linha para campos relacionados */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md);
+}
+
+/* Textarea customizado */
+.textarea {
+  resize: vertical;
+  min-height: 100px;
+  font-family: var(--font-family);
+}
+
+/* Contador de caracteres */
+.character-count {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  text-align: right;
+  margin-top: var(--spacing-xs);
+}
+
+/* Select customizado */
+select.form-input {
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23ffffff' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 6l3 3 3-3z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--spacing-md) center;
+  background-size: 16px;
+  padding-right: var(--spacing-2xl);
+}
+
+select.form-input option {
+  background-color: var(--bg-input);
+  color: var(--text-primary);
+}
+
+/* Ajustes para campos de data */
+.form-input[type="date"] {
+  color-scheme: dark;
+}
+
+.form-input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+}
+
+/* Ajustes para campos numéricos */
+.form-input[type="number"] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.form-input[type="number"]::-webkit-outer-spin-button,
+.form-input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .page-content {
+    flex-direction: column;
+    gap: var(--spacing-xl);
+    padding: var(--spacing-md);
+  }
+  
+  .brand-section {
+    max-width: none;
+    max-height: fit-content;
+  }
+  
+  .brand-title {
+    font-size: 36px;
+  }
+  
+  .professional-card {
+    flex: none;
+    width: 100%;
+    max-width: 400px;
+    padding: var(--spacing-lg);
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .shape {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .professional-card {
+    max-width: 100%;
+    padding: var(--spacing-md);
+  }
+  
+  .form-section {
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-md);
+  }
+  
+  .section-title {
+    font-size: var(--font-size-base);
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .form-title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .form-subtitle {
+    font-size: var(--font-size-sm);
+  }
+}

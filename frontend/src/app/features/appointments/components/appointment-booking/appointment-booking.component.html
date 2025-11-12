@@ -1,0 +1,295 @@
+<div class="booking-modal-overlay">
+  <div class="booking-modal">
+    <!-- Header -->
+    <div class="modal-header">
+      <h2 class="modal-title">Novo Agendamento</h2>
+      <button class="btn-close" (click)="cancel()" type="button">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <!-- Progress Steps -->
+    <div class="booking-steps">
+      <div class="step" 
+           *ngFor="let step of steps" 
+           [class.active]="step.number === currentStep"
+           [class.completed]="step.completed"
+           (click)="goToStep(step.number)">
+        <div class="step-number">
+          <mat-icon *ngIf="step.completed">check</mat-icon>
+          <span *ngIf="!step.completed">{{ step.number }}</span>
+        </div>
+        <div class="step-title">{{ step.title }}</div>
+      </div>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-body">
+      <form [formGroup]="bookingForm">
+        <!-- Step 1: Selecionar Serviços -->
+        <div class="step-content" *ngIf="currentStep === 1">
+          <h3 class="step-heading">Selecione os Serviços</h3>
+          <p class="step-description">Escolha um ou mais serviços para o seu agendamento</p>
+
+          <div class="services-grid" *ngIf="!isLoading">
+            <div class="service-card" 
+                 *ngFor="let service of availableServices"
+                 [class.selected]="isServiceSelected(service)"
+                 (click)="selectService(service)">
+              <div class="service-icon">
+                <mat-icon>{{ getServiceIcon(service.nome) }}</mat-icon>
+              </div>
+              <div class="service-info">
+                <h4 class="service-name">{{ service.nome }}</h4>
+                <p class="service-professional" *ngIf="service.profissionalNome">
+                  <mat-icon>person</mat-icon>
+                  {{ service.profissionalNome }}
+                </p>
+                <p class="service-description">{{ service.descricao }}</p>
+                <div class="service-meta">
+                  <span class="service-price">R$ {{ service.preco.toFixed(2) }}</span>
+                  <span class="service-duration">
+                    <mat-icon>schedule</mat-icon>
+                    {{ service.duracaoMinutos }}min
+                  </span>
+                </div>
+              </div>
+              <div class="service-check" *ngIf="isServiceSelected(service)">
+                <mat-icon>check_circle</mat-icon>
+              </div>
+            </div>
+          </div>
+
+          <div class="loading-state" *ngIf="isLoading">
+            <mat-icon class="spin">refresh</mat-icon>
+            <p>Carregando serviços...</p>
+          </div>
+
+          <div class="selected-summary" *ngIf="selectedServices.length > 0">
+            <div class="summary-row">
+              <span>{{ selectedServices.length }} serviço(s) selecionado(s)</span>
+              <span>Duração total: {{ getTotalDuration() }}min</span>
+            </div>
+            <div class="summary-total">
+              <strong>Total: R$ {{ getTotalPrice().toFixed(2) }}</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Selecionar Profissional -->
+        <div class="step-content" *ngIf="currentStep === 2">
+          <h3 class="step-heading">Escolha o Profissional</h3>
+          <p class="step-description">Selecione o profissional que realizará seu atendimento</p>
+
+          <div class="professionals-list" *ngIf="!isLoading && availableProfessionals.length > 0">
+            <div class="professional-card" 
+                 *ngFor="let professional of availableProfessionals"
+                 [class.selected]="isProfessionalSelected(professional)"
+                 (click)="selectProfessional(professional)">
+              <div class="professional-avatar">
+                <mat-icon>person</mat-icon>
+              </div>
+              <div class="professional-info">
+                <h4 class="professional-name">{{ professional.nome }}</h4>
+                <p class="professional-email">{{ professional.email }}</p>
+                <p class="professional-specialty" *ngIf="professional.especialidade && professional.especialidade.length > 0">
+                  <mat-icon class="small-icon">business_center</mat-icon>
+                  {{ professional.especialidade.join(', ') }}
+                </p>
+                <p class="professional-phone" *ngIf="professional.telefone">
+                  <mat-icon class="small-icon">phone</mat-icon>
+                  {{ professional.telefone }}
+                </p>
+              </div>
+              <div class="professional-check" *ngIf="isProfessionalSelected(professional)">
+                <mat-icon>check_circle</mat-icon>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-message" *ngIf="!isLoading && availableProfessionals.length === 0">
+            <mat-icon>info</mat-icon>
+            <p>Nenhum profissional oferece todos os serviços selecionados.</p>
+            <p>Por favor, volte e ajuste sua seleção de serviços.</p>
+          </div>
+
+          <div class="loading-state" *ngIf="isLoading">
+            <mat-icon class="spin">refresh</mat-icon>
+            <p>Carregando profissionais...</p>
+          </div>
+        </div>
+
+        <!-- Step 3: Selecionar Data e Hora -->
+        <div class="step-content" *ngIf="currentStep === 3">
+          <h3 class="step-heading">Data e Horário</h3>
+          <p class="step-description">Escolha a melhor data e horário para você</p>
+
+          <div class="datetime-section">
+            <!-- Seleção de Data -->
+            <div class="form-group">
+              <label for="date">Data do Agendamento</label>
+              <mat-form-field appearance="outline" class="full-width" subscriptSizing="dynamic">
+                <mat-label>Escolha a data</mat-label>
+                <input matInput 
+                       [matDatepicker]="picker" 
+                       formControlName="scheduledDate"
+                       [min]="minDate"
+                       [max]="maxDate"
+                       (dateChange)="onDateChange()"
+                       placeholder="DD/MM/AAAA">
+                <mat-hint>Selecione uma data clicando no ícone</mat-hint>
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
+            </div>
+
+            <!-- Seleção de Horário -->
+            <div class="form-group">
+              <label>Horário Disponível</label>
+              <div class="time-slots-grid" *ngIf="availableTimeSlots && availableTimeSlots.length > 0; else noTimeSlots">
+                <button type="button"
+                        class="time-slot" 
+                        *ngFor="let time of availableTimeSlots"
+                        [class.selected]="isTimeSlotSelected(time)"
+                        (click)="selectTimeSlot(time)">
+                  {{ time }}
+                </button>
+              </div>
+              <ng-template #noTimeSlots>
+                <p class="info-message">Selecione uma data para ver os horários disponíveis</p>
+              </ng-template>
+            </div>
+
+            <!-- Observações -->
+            <div class="form-group">
+              <label for="notes">Observações (Opcional)</label>
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Alguma observação para o profissional?</mat-label>
+                <textarea matInput 
+                          formControlName="notes" 
+                          rows="4"
+                          maxlength="500"
+                          placeholder="Ex: Preferência de estilo, alergias, etc."></textarea>
+                <mat-hint align="end">{{ bookingForm.get('notes')?.value?.length || 0 }}/500</mat-hint>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: Confirmação -->
+        <div class="step-content" *ngIf="currentStep === 4">
+          <h3 class="step-heading">Confirme seu Agendamento</h3>
+          <p class="step-description">Revise os detalhes antes de confirmar</p>
+
+          <div class="confirmation-summary">
+            <!-- Serviços -->
+            <div class="summary-section">
+              <h4 class="summary-title">
+                <mat-icon>room_service</mat-icon>
+                Serviços
+              </h4>
+              <div class="summary-items">
+                <div class="summary-item" *ngFor="let service of selectedServices">
+                  <div class="item-info">
+                    <span class="item-name">{{ service.nome }}</span>
+                    <span class="item-professional" *ngIf="service.profissionalNome">
+                      <mat-icon>person</mat-icon>
+                      {{ service.profissionalNome }}
+                    </span>
+                  </div>
+                  <span class="item-value">R$ {{ service.preco.toFixed(2) }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Profissional -->
+            <div class="summary-section">
+              <h4 class="summary-title">
+                <mat-icon>person</mat-icon>
+                Profissional
+              </h4>
+              <div class="summary-content">
+                <p>{{ getSelectedProfessionalName() }}</p>
+              </div>
+            </div>
+
+            <!-- Data e Hora -->
+            <div class="summary-section">
+              <h4 class="summary-title">
+                <mat-icon>event</mat-icon>
+                Data e Horário
+              </h4>
+              <div class="summary-content">
+                <p><strong>Data:</strong> {{ formatDate(getScheduledDate()!) }}</p>
+                <p><strong>Horário:</strong> {{ getStartTime() }} - {{ getEndTime() }}</p>
+                <p><strong>Duração:</strong> {{ getTotalDuration() }} minutos</p>
+              </div>
+            </div>
+
+            <!-- Observações -->
+            <div class="summary-section" *ngIf="hasNotes()">
+              <h4 class="summary-title">
+                <mat-icon>note</mat-icon>
+                Observações
+              </h4>
+              <div class="summary-content">
+                <p>{{ getNotes() }}</p>
+              </div>
+            </div>
+
+            <!-- Total -->
+            <div class="summary-total-section">
+              <div class="total-row">
+                <span class="total-label">Total a Pagar:</span>
+                <span class="total-value">R$ {{ getTotalPrice().toFixed(2) }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mensagem de Sucesso -->
+          <div class="message success" *ngIf="successMessage">
+            <mat-icon>check_circle</mat-icon>
+            <span>{{ successMessage }}</span>
+          </div>
+        </div>
+      </form>
+
+      <!-- Mensagem de Erro -->
+      <div class="message error" *ngIf="errorMessage">
+        <mat-icon>error</mat-icon>
+        <span>{{ errorMessage }}</span>
+      </div>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="modal-footer">
+      <button type="button" 
+              class="btn btn-secondary" 
+              (click)="previousStep()"
+              *ngIf="currentStep > 1 && currentStep < 5"
+              [disabled]="isLoading">
+        <mat-icon>arrow_back</mat-icon>
+        Voltar
+      </button>
+
+      <button type="button" 
+              class="btn btn-primary" 
+              (click)="nextStep()"
+              *ngIf="currentStep < 4"
+              [disabled]="isLoading">
+        Próximo
+        <mat-icon>arrow_forward</mat-icon>
+      </button>
+
+      <button type="button" 
+              class="btn btn-success" 
+              (click)="confirmBooking()"
+              *ngIf="currentStep === 4"
+              [disabled]="isLoading || !bookingForm.valid || successMessage">
+        <mat-icon *ngIf="isLoading" class="spin">refresh</mat-icon>
+        <mat-icon *ngIf="!isLoading">check</mat-icon>
+        {{ isLoading ? 'Confirmando...' : 'Confirmar Agendamento' }}
+      </button>
+    </div>
+  </div>
+</div>

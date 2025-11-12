@@ -1,0 +1,70 @@
+/* O registro de cliente usa o design system global */
+/* Importa automaticamente todas as classes do design system */
+
+/* Customizações específicas para o registro de cliente */
+.form-card {
+  max-width: 450px; /* Um pouco mais largo devido aos campos extras */
+}
+
+/* Ajustes específicos para campos de data */
+.form-input[type="date"] {
+  color-scheme: dark;
+}
+
+.form-input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+}
+
+/* Estilo para campos com máscara */
+.form-input[placeholder*="("] {
+  font-family: 'Monaco', 'Menlo', monospace;
+}
+
+/* Ajustes responsivos específicos */
+@media (max-width: 768px) {
+  .page-content {
+    flex-direction: column;
+    gap: var(--spacing-xl);
+    padding: var(--spacing-md);
+  }
+  
+  .brand-section {
+    max-width: none;
+    max-height: fit-content;
+  }
+  
+  .brand-title {
+    font-size: 36px;
+  }
+  
+  .brand-subtitle {
+    font-size: var(--font-size-base);
+  }
+  
+  .form-card {
+    flex: none;
+    width: 100%;
+    max-width: 400px;
+    padding: var(--spacing-lg);
+  }
+  
+  .shape {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-card {
+    max-width: 100%;
+    padding: var(--spacing-md);
+  }
+  
+  .form-title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .form-subtitle {
+    font-size: var(--font-size-sm);
+  }
+}

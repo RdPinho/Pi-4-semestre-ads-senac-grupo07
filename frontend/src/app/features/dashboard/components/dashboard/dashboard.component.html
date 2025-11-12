@@ -1,0 +1,176 @@
+<div class="dashboard-page">
+  <!-- Header principal -->
+  <header class="dashboard-header">
+    <div class="header-content">
+      <!-- Logo e título -->
+      <div class="brand-section">
+        <div class="logo">
+          <mat-icon class="logo-icon">content_cut</mat-icon>
+        </div>
+        <h1 class="brand-title">BarberShop</h1>
+      </div>
+
+      <!-- Informações do usuário -->
+      <div class="user-section" *ngIf="currentUser">
+        <div class="user-info">
+          <div class="user-avatar">
+            <mat-icon>account_circle</mat-icon>
+          </div>
+          <div class="user-details">
+            <span class="user-name">{{ currentUser.nome }}</span>
+            <span class="user-role">{{ currentUser.role | titlecase }}</span>
+          </div>
+        </div>
+        <button class="logout-button" (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span>Sair</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="dashboard-main">
+    <div class="container">
+      <!-- Welcome Section -->
+      <section class="welcome-section">
+        <div class="welcome-content">
+          <h2>Bem-vindo de volta!</h2>
+          <p>Aqui está um resumo do seu sistema hoje</p>
+        </div>
+        <div class="date-info">
+          <mat-icon>today</mat-icon>
+          <span>{{ today | date:'fullDate' }}</span>
+        </div>
+      </section>
+
+      <!-- Stats Cards -->
+      <section class="stats-section">
+        <div class="stats-grid">
+          <div class="stat-card stat-primary">
+            <div class="stat-icon">
+              <mat-icon>event_available</mat-icon>
+            </div>
+            <div class="stat-content">
+              <h3>{{ stats.todayAppointments }}</h3>
+              <p>Agendamentos Hoje</p>
+            </div>
+          </div>
+
+          <div class="stat-card stat-success">
+            <div class="stat-icon">
+              <mat-icon>people</mat-icon>
+            </div>
+            <div class="stat-content">
+              <h3>{{ stats.totalClients }}</h3>
+              <p>Total de Clientes</p>
+            </div>
+          </div>
+
+          <div class="stat-card stat-warning">
+            <div class="stat-icon">
+              <mat-icon>person_pin</mat-icon>
+            </div>
+            <div class="stat-content">
+              <h3>{{ stats.totalProfessionals }}</h3>
+              <p>Profissionais Ativos</p>
+            </div>
+          </div>
+
+          <div class="stat-card stat-info">
+            <div class="stat-icon">
+              <mat-icon>payments</mat-icon>
+            </div>
+            <div class="stat-content">
+              <h3>R$ {{ stats.monthlyRevenue | number:'1.0-0' }}</h3>
+              <p>Receita Mensal</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Quick Actions -->
+      <section class="quick-actions-section">
+        <h3 class="section-title">Acesso Rápido</h3>
+        <div class="quick-actions-grid">
+          <div class="action-card" routerLink="/clients">
+            <div class="action-icon">
+              <mat-icon>people</mat-icon>
+            </div>
+            <h4>Clientes</h4>
+            <p>Gerenciar cadastro de clientes</p>
+            <div class="action-arrow">
+              <mat-icon>arrow_forward</mat-icon>
+            </div>
+          </div>
+
+          <div class="action-card" routerLink="/professionals">
+            <div class="action-icon">
+              <mat-icon>person_pin</mat-icon>
+            </div>
+            <h4>Profissionais</h4>
+            <p>Gerenciar equipe e serviços</p>
+            <div class="action-arrow">
+              <mat-icon>arrow_forward</mat-icon>
+            </div>
+          </div>
+
+          <div class="action-card" routerLink="/appointments">
+            <div class="action-icon">
+              <mat-icon>event</mat-icon>
+            </div>
+            <h4>Agendamentos</h4>
+            <p>Visualizar e gerenciar agenda</p>
+            <div class="action-arrow">
+              <mat-icon>arrow_forward</mat-icon>
+            </div>
+          </div>
+
+          <div class="action-card" routerLink="/profile">
+            <div class="action-icon">
+              <mat-icon>settings</mat-icon>
+            </div>
+            <h4>Configurações</h4>
+            <p>Perfil e configurações do sistema</p>
+            <div class="action-arrow">
+              <mat-icon>arrow_forward</mat-icon>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Recent Appointments -->
+      <section class="appointments-section">
+        <div class="section-header">
+          <h3 class="section-title">Próximos Agendamentos</h3>
+          <button class="see-all-button" routerLink="/appointments">
+            Ver todos
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </div>
+        
+        <div class="appointments-card">
+          <div class="appointment-item" *ngFor="let appointment of recentAppointments">
+            <div class="appointment-time">
+              <div class="time">{{ appointment.time }}</div>
+            </div>
+            <div class="appointment-info">
+              <h4 class="client-name">{{ appointment.clientName }}</h4>
+              <p class="service-info">{{ appointment.service }}</p>
+              <p class="professional-info">com {{ appointment.professionalName }}</p>
+            </div>
+            <div class="appointment-status">
+              <span class="status-badge" [class]="appointment.status.toLowerCase().replace(' ', '-')">
+                {{ appointment.status }}
+              </span>
+            </div>
+          </div>
+          
+          <div class="no-appointments" *ngIf="recentAppointments.length === 0">
+            <mat-icon>event_busy</mat-icon>
+            <p>Nenhum agendamento para hoje</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
