@@ -29,6 +29,7 @@ export class AuthService {
   
   constructor(private http: HttpClient) {
     this.loadStoredUser();
+    this.setupAutoLogout();
   }
   
   login(credentials: LoginRequest): Observable<ApiResponse<LoginResponse>> {
@@ -132,5 +133,14 @@ export class AuthService {
       const user: User = JSON.parse(userJson);
       this.currentUserSubject.next(user);
     }
+  }
+
+  private setupAutoLogout(): void {
+    window.addEventListener('beforeunload', () => {
+      localStorage.removeItem(this.TOKEN_KEY);
+      localStorage.removeItem(this.USER_KEY);
+      localStorage.removeItem(this.REFRESH_TOKEN_KEY);
+      this.currentUserSubject.next(null);
+    });
   }
 }

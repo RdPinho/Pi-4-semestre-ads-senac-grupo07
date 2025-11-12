@@ -528,5 +528,6 @@ export class ProfessionalDashboardComponent implements OnInit {
   // Navegação
   logout(): void {
     this.authService.logout();
+    window.location.href = '/auth/login'
   }
 }

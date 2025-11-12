@@ -327,6 +327,7 @@ export class ClientDashboardComponent implements OnInit {
 
   logout(): void {
     this.authService.logout();
+    window.location.href = '/auth/login';
   }
 
   bookService(service: Service): void {
