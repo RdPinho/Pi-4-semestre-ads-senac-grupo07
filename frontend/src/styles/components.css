@@ -35,7 +35,6 @@
   height: var(--logo-size);
   background: var(--gradient-primary);
   border-radius: var(--border-radius-lg);
-  margin-bottom: var(--spacing-lg);
   box-shadow: var(--shadow-md);
 }
 
@@ -74,7 +73,7 @@
 
 .form-header {
   text-align: center;
-  margin-bottom: var(--spacing-xl);
+  margin-bottom: var(--spacing-md);
 }
 
 .form-title {
