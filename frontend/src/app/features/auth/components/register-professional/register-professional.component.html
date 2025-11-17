@@ -76,7 +76,21 @@
                 </div>
               </div>
 
+              <!-- Especialidade -->
+              <div class="form-group">
+                <div class="input-wrapper">
+                  <select id="especialidade" formControlName="especialidade" class="form-input" [class.error]="registerForm.get('especialidade')?.errors && registerForm.get('especialidade')?.touched">
+                    <option value="" disabled selected>Selecione a especialidade</option>
+                    <option *ngFor="let esp of specialties" [value]="esp">{{ esp }}</option>
+                  </select>
+                </div>
+                <div class="error-text" *ngIf="registerForm.get('especialidade')?.errors && registerForm.get('especialidade')?.touched">
+                  {{ getErrorMessage('especialidade') }}
+                </div>
+              </div>
+
               <!-- Portfolio (opcional) -->
+              <!-- Portfolio (opcional) oculto temporariamente
               <div class="form-group">
                 <div class="input-wrapper">
                   <input
@@ -87,6 +101,7 @@
                     class="form-input">
                 </div>
               </div>
+              -->
 
               <!-- Senha -->
               <div class="form-group">

@@ -46,9 +46,10 @@ export class RegisterProfessionalComponent {
       nome: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
       telefone: ['', [Validators.required]],
-      especialidade: [[], [Validators.required]],
+      especialidade: ['', [Validators.required]],
       senha: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', [Validators.required]]
+      confirmPassword: ['', [Validators.required]],
+      portfolioUrl: ['']
     }, { validators: this.passwordMatchValidator });
   }
 
