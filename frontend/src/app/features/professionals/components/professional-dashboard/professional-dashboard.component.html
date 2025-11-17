@@ -381,3 +381,43 @@
   (serviceAdded)="onServiceAdded()"
   (cancelled)="closeAddServiceModal()">
 </app-add-service-modal>
+
+<div class="modal-overlay" *ngIf="showCancelModal" (click)="closeCancelModal()">
+  <div class="modal-content cancel-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Cancelar Agendamento</h3>
+      <button class="btn-ghost" (click)="closeCancelModal()">
+        <i class="material-icons">close</i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="cancel-confirmation">
+        <div class="cancel-icon">
+          <i class="material-icons">warning</i>
+        </div>
+        <p class="cancel-message">
+          Tem certeja que deseja cancelar este agendamento?
+        </p>
+        <div class="appointment-details" *ngIf="appointmentToCancel">
+          <div class="detail-item">
+            <i class="material-icons">event</i>
+              <span>{{ formatAppointmentDate(appointmentToCancel) }}</span>
+          </div>
+          <div>
+            <i class="material-icons">attach_money</i>
+            <span>R$ {{ (appointmentToCancel.totalPrice || 0).toFixed(2) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" (click)="closeCancelModal()">
+        <i class="material-icons">arrow_back</i>
+      </button>
+      <button class="btn-danger" (click)="confirmCancelAppoiintment()">
+        <i class="material-icons">cancel</i>
+        Cancelar Agendamento
+      </button>
+    </div>
+  </div>
+</div>

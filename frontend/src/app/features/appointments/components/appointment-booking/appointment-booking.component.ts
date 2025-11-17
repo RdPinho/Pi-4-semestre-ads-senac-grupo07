@@ -76,9 +76,8 @@ export class AppointmentBookingComponent implements OnInit {
   // Etapas do agendamento
   steps: BookingStep[] = [
     { number: 1, title: 'Serviços', completed: false },
-    { number: 2, title: 'Profissional', completed: false },
-    { number: 3, title: 'Data e Hora', completed: false },
-    { number: 4, title: 'Confirmação', completed: false }
+    { number: 2, title: 'Data e Hora', completed: false },
+    { number: 3, title: 'Confirmação', completed: false }
   ];
 
   // Horários disponíveis de exemplo (8h às 18h)
@@ -100,9 +99,11 @@ export class AppointmentBookingComponent implements OnInit {
     private userService: UserService,
     private authService: AuthService
   ) {
+    const today = new Date();
+    this.minDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     this.bookingForm = this.fb.group({
       serviceIds: [[], [Validators.required, Validators.minLength(1)]],
-      professionalId: ['', Validators.required],
+      // professionalId: ['', Validators.required],
       scheduledDate: ['', Validators.required],
       startTime: ['', Validators.required],
       notes: ['', Validators.maxLength(500)]
@@ -145,72 +146,42 @@ export class AppointmentBookingComponent implements OnInit {
     });
   }
 
-  private loadProfessionals(): void {
-    this.isLoading = true;
-    
-    // Se há serviços selecionados, buscar apenas profissionais que oferecem esses serviços
-    if (this.selectedServices.length > 0) {
-      const serviceIds = this.selectedServices.map(s => s.id);
-      this.userService.getProfessionalsByServices(serviceIds).subscribe({
-        next: (response: any) => {
-          if (response.success) {
-            this.availableProfessionals = response.data;
-            if (this.availableProfessionals.length === 0) {
-              this.errorMessage = 'Nenhum profissional oferece todos os serviços selecionados. Por favor, ajuste sua seleção.';
-            } else {
-              this.errorMessage = '';
-            }
-          }
-          this.isLoading = false;
-        },
-        error: (error: any) => {
-          console.error('Erro ao carregar profissionais:', error);
-          this.errorMessage = 'Erro ao carregar profissionais disponíveis';
-          this.isLoading = false;
-        }
-      });
-    } else {
-      // Se não há serviços selecionados, carregar todos os profissionais
-      this.userService.getProfessionals().subscribe({
-        next: (response: any) => {
-          if (response.success) {
-            this.availableProfessionals = response.data;
-          }
-          this.isLoading = false;
-        },
-        error: (error: any) => {
-          console.error('Erro ao carregar profissionais:', error);
-          this.errorMessage = 'Erro ao carregar profissionais disponíveis';
-          this.isLoading = false;
-        }
-      });
-    }
-  }
-
   private loadAvailableTimeSlots(): void {
-    const date = this.bookingForm.get('scheduledDate')?.value;
-    const professionalId = this.bookingForm.get('professionalId')?.value;
-    
-    if (!date || !professionalId) {
+    const selectedDate = this.bookingForm.get('scheduledDate')?.value;
+
+    if (!selectedDate) {
       this.availableTimeSlots = this.timeSlots;
       return;
     }
 
     // Por enquanto, usar horários fixos
     // TODO: Implementar busca de horários disponíveis no backend
-    this.availableTimeSlots = this.timeSlots;
+    // this.availableTimeSlots = this.timeSlots;
+    const today = new Date();
+    const isToday = selectedDate.toDateString() === today.getMinutes();
+    if(isToday) {
+      const currentTime = today.getHours() * 60 + today.getMinutes();
+      this.availableTimeSlots = this.timeSlots.filter(time => {
+        const [hours, minutes] = time.split(':').map(Number);
+        const slotTime = hours * 60 + minutes;
+        return slotTime > currentTime;
+      });
+    }
   }
 
   selectService(service: Service): void {
-    const index = this.selectedServices.findIndex(s => s.id === service.id);
+    // const index = this.selectedServices.findIndex(s => s.id === service.id);
     
-    if (index > -1) {
-      // Remover se já estava selecionado
-      this.selectedServices.splice(index, 1);
-    } else {
-      // Adicionar se não estava selecionado
-      this.selectedServices.push(service);
-    }
+    // if (index > -1) {
+    //   // Remover se já estava selecionado
+    //   this.selectedServices.splice(index, 1);
+    // } else {
+    //   // Adicionar se não estava selecionado
+    //   this.selectedServices.push(service);
+    // }
+
+    // Permitir apenas 1 serviço por agendamento
+  this.selectedServices = [service];
 
     // Atualizar formulário
     const serviceIds = this.selectedServices.map(s => s.id);
@@ -243,16 +214,16 @@ export class AppointmentBookingComponent implements OnInit {
 
   nextStep(): void {
     if (this.currentStep === 1 && this.selectedServices.length === 0) {
-      this.errorMessage = 'Selecione pelo menos um serviço';
+      this.errorMessage = 'Selecione um serviço';
       return;
     }
 
-    if (this.currentStep === 2 && !this.bookingForm.get('professionalId')?.value) {
-      this.errorMessage = 'Selecione um profissional';
-      return;
-    }
+    // if (this.currentStep === 2 && !this.bookingForm.get('professionalId')?.value) {
+    //   this.errorMessage = 'Selecione um profissional';
+    //   return;
+    // }
 
-    if (this.currentStep === 3) {
+    if (this.currentStep === 2) {
       if (!this.bookingForm.get('scheduledDate')?.value) {
         this.errorMessage = 'Selecione uma data';
         return;
@@ -269,8 +240,8 @@ export class AppointmentBookingComponent implements OnInit {
 
     // Carregar dados para próxima etapa
     if (this.currentStep === 2) {
-      this.loadProfessionals();
-    } else if (this.currentStep === 3) {
+    //   this.loadProfessionals();
+    // } else if (this.currentStep === 3) {
       this.loadAvailableTimeSlots();
     }
   }
@@ -331,9 +302,18 @@ export class AppointmentBookingComponent implements OnInit {
     const scheduledDate = new Date(formValue.scheduledDate);
     const dateString = scheduledDate.toISOString().split('T')[0];
 
+    let professionalId = '';
+    if(this.selectedServices.length > 0 && this.selectedServices[0].profissionalId) {
+      professionalId = this.selectedServices[0].profissionalId;
+    } else {
+      this.errorMessage = 'Não foi possível identificar o profissional do serviço.';
+      this.isLoading = false;
+      return;
+    }
+
     const appointmentRequest: CreateAppointmentRequest = {
       clientId: this.currentUser.id,
-      professionalId: formValue.professionalId,
+      professionalId: professionalId,
       serviceIds: formValue.serviceIds,
       scheduledDate: dateString,
       startTime: formValue.startTime,
@@ -364,6 +344,10 @@ export class AppointmentBookingComponent implements OnInit {
       this.bookingCanceled.emit();
     }
   }
+  
+  closeWithoutConfirm(): void {
+    this.bookingCanceled.emit();
+  }
 
   getServiceIcon(serviceName: string): string {
     const name = serviceName?.toLowerCase() || '';
@@ -392,9 +376,13 @@ export class AppointmentBookingComponent implements OnInit {
   }
 
   getSelectedProfessionalName(): string {
-    const professionalId = this.bookingForm.get('professionalId')?.value;
-    const professional = this.availableProfessionals.find(p => p.id === professionalId);
-    return professional?.nome || '';
+    // const professionalId = this.bookingForm.get('professionalId')?.value;
+    // const professional = this.availableProfessionals.find(p => p.id === professionalId);
+    // return professional?.nome || '';
+    if(this.selectedServices.length > 0 && this.selectedServices[0].profissionalNome) {
+      return this.selectedServices[0].profissionalNome;
+    }
+    return '';
   }
 
   getScheduledDate(): Date | null {

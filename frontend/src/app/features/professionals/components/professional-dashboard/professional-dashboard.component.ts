@@ -10,6 +10,7 @@ import { ServiceService } from '../../../../core/services/service.service';
 import { UserService } from '../../../../core/services/user.service';
 import { User, Appointment, Service, AppointmentStatus, ServiceCategory } from '../../../../models';
 import { AddServiceModalComponent } from '../add-service-modal/add-service-modal.component';
+import { error } from 'node:console';
 
 @Component({
   selector: 'app-professional-dashboard',
@@ -28,7 +29,7 @@ import { AddServiceModalComponent } from '../add-service-modal/add-service-modal
 export class ProfessionalDashboardComponent implements OnInit {
   currentUser: User | null = null;
   today = new Date();
-  
+
   // Expor enum para o template
   readonly AppointmentStatus = AppointmentStatus;
 
@@ -48,7 +49,9 @@ export class ProfessionalDashboardComponent implements OnInit {
   showSummary = true;
   showServiceModal = false;
   showAddServiceModal = false; // Modal para adicionar novo serviço
+  showCancelModal = false;
   selectedTimeSlot: string | null = null;
+  appointmentToCancel?: Appointment;
 
   // Agendamentos de hoje - será carregado do backend
   todayAppointments: Appointment[] = [];
@@ -113,11 +116,11 @@ export class ProfessionalDashboardComponent implements OnInit {
               const dateB = b.scheduledDate?.getTime() || 0;
               return dateA - dateB; // Ordenar do mais próximo para o mais distante
             });
-          
+
           // Filtrar agendamentos de hoje
           const todayDate = new Date();
           todayDate.setHours(0, 0, 0, 0);
-          
+
           this.todayAppointments = allAppointments.filter(apt => {
             const aptDate = apt.scheduledDate || new Date();
             aptDate.setHours(0, 0, 0, 0);
@@ -134,7 +137,7 @@ export class ProfessionalDashboardComponent implements OnInit {
           // Calcular agendamentos da semana (hoje + próximos 7 dias)
           const nextWeekDate = new Date(todayDate);
           nextWeekDate.setDate(nextWeekDate.getDate() + 7);
-          
+
           const weekAppointments = allAppointments.filter(apt => {
             const aptDate = apt.scheduledDate || new Date();
             aptDate.setHours(0, 0, 0, 0);
@@ -194,7 +197,7 @@ export class ProfessionalDashboardComponent implements OnInit {
   // Calcular uso dos serviços baseado nos agendamentos
   private calculateServiceUsage(): void {
     const serviceUsage = new Map<string, number>();
-    
+
     // Contar quantas vezes cada serviço foi usado
     const allAppointments = [...this.todayAppointments, ...this.upcomingAppointments, ...this.completedAppointmentsData];
     allAppointments.forEach(appointment => {
@@ -203,7 +206,7 @@ export class ProfessionalDashboardComponent implements OnInit {
         serviceUsage.set(key, (serviceUsage.get(key) || 0) + 1);
       });
     });
-    
+
     // Adicionar contagem aos serviços
     this.myServices = this.myServices.map(service => ({
       ...service,
@@ -215,25 +218,25 @@ export class ProfessionalDashboardComponent implements OnInit {
   private transformAppointment(apt: any): Appointment {
     // Converter dataHora (string ISO ou Date) para Date
     const dataHora = new Date(apt.dataHora);
-    
+
     // Extrair data e hora
     const scheduledDate = dataHora;
     const startTime = dataHora.toTimeString().substring(0, 5); // HH:mm
-    
+
     // Calcular endTime
     let duration = 60; // padrão
-    
+
     // Se veio servico expandido do backend, usar sua duração
     if (apt.servico && apt.servico.duracaoMinutos) {
       duration = apt.servico.duracaoMinutos;
     }
-    
+
     const endDate = new Date(dataHora.getTime() + duration * 60000);
     const endTime = endDate.toTimeString().substring(0, 5);
-    
+
     // Montar array de services
     let services = apt.services || [];
-    
+
     // Se não tem services mas tem servico expandido, usar ele
     if ((!services || services.length === 0) && apt.servico) {
       services = [{
@@ -243,7 +246,7 @@ export class ProfessionalDashboardComponent implements OnInit {
         duration: apt.servico.duracaoMinutos || 60
       }];
     }
-    
+
     // Se não tem nada, criar um padrão
     if (!services || services.length === 0) {
       services = [{
@@ -253,15 +256,15 @@ export class ProfessionalDashboardComponent implements OnInit {
         duration: 60
       }];
     }
-    
+
     // Informações do cliente (se disponível)
     let clientName = undefined;
     if (apt.cliente && apt.cliente.nome) {
       clientName = apt.cliente.nome;
     }
-    
+
     const normalizedStatus = this.normalizeStatus(apt.status);
-    
+
     return {
       id: apt.id,
       clientId: apt.usuarioId,
@@ -289,10 +292,10 @@ export class ProfessionalDashboardComponent implements OnInit {
     if (!status) {
       return AppointmentStatus.SCHEDULED;
     }
-    
+
     // Converter para string e uppercase para comparação
     const statusStr = String(status).toUpperCase().trim();
-    
+
     const statusMap: Record<string, AppointmentStatus> = {
       // Nomes dos enums (uppercase)
       'PENDENTE': AppointmentStatus.SCHEDULED,
@@ -312,20 +315,20 @@ export class ProfessionalDashboardComponent implements OnInit {
       'NÃO COMPARECEU': AppointmentStatus.NO_SHOW,
       'NO_SHOW': AppointmentStatus.NO_SHOW
     };
-    
+
     return statusMap[statusStr] || AppointmentStatus.SCHEDULED;
   }
 
   private calculateTotalRevenue(): void {
     const completed = this.completedAppointments;
-    this.totalRevenue = completed.reduce((total, appointment) => 
+    this.totalRevenue = completed.reduce((total, appointment) =>
       total + (appointment.totalPrice || 0), 0
     );
   }
 
   formatAppointmentDate(appointment: Appointment): string {
     const date = appointment.scheduledDate || (appointment.dataHora ? new Date(appointment.dataHora) : new Date());
-    return date.toLocaleDateString('pt-BR', { 
+    return date.toLocaleDateString('pt-BR', {
       day: '2-digit',
       month: 'short'
     }) + ' às ' + (appointment.startTime || '00:00');
@@ -367,20 +370,20 @@ export class ProfessionalDashboardComponent implements OnInit {
       'depilação': 'spa',
       'hidratação': 'water_drop'
     };
-    
+
     // Busca por palavra-chave no nome
     for (const [key, icon] of Object.entries(icons)) {
       if (name.includes(key)) {
         return icon;
       }
     }
-    
+
     return 'room_service';
   }
 
   getClientName(clientId: string | undefined): string {
     if (!clientId) return 'Cliente';
-    
+
     // Mock de nomes de clientes
     const clients: Record<string, string> = {
       'client1': 'João Silva',
@@ -447,21 +450,8 @@ export class ProfessionalDashboardComponent implements OnInit {
   }
 
   cancelAppointment(appointment: Appointment): void {
-    console.log('🔴 RECUSAR/CANCELAR CLICKED - ID:', appointment.id);
-    if (confirm('Tem certeza que deseja cancelar este agendamento?')) {
-      this.appointmentService.cancelAppointment(appointment.id, 'Cancelado pelo profissional').subscribe({
-        next: (response) => {
-          if (response.success) {
-            console.log('Agendamento cancelado com sucesso');
-            this.loadDashboardData();
-          }
-        },
-        error: (error) => {
-          console.error('Erro ao cancelar agendamento:', error);
-          alert('Erro ao cancelar agendamento. Tente novamente.');
-        }
-      });
-    }
+    this.appointmentToCancel = appointment;
+    this.showCancelModal = true;
   }
 
   // Gerenciamento de serviços
@@ -506,6 +496,30 @@ export class ProfessionalDashboardComponent implements OnInit {
   // Modais
   openServiceModal(): void {
     this.showServiceModal = true;
+  }
+
+  confirmCancelAppoiintment(): void {
+    if (this.appointmentToCancel) {
+      this.appointmentService.cancelAppointment(this.appointmentToCancel.id, 'Cancelado pelo profissional').subscribe({
+        next: (response) => {
+          if (response.success) {
+            console.log('Agendamento cancelado com sucesso');
+            this.loadDashboardData();
+            this.closeCancelModal();
+          }
+        },
+        error: (error) => {
+          console.error('Erro ao cancelar agendamento: ', error);
+          alert('Erroao cancelar agendamento. Tente novamente.');
+          this.closeCancelModal();
+        }
+      });
+    }
+  }
+
+  closeCancelModal(): void {
+    this.showCancelModal = false;
+    this.appointmentToCancel = undefined;
   }
 
   closeServiceModal(): void {

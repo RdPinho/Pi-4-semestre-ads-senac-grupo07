@@ -3,7 +3,7 @@
     <!-- Header -->
     <div class="modal-header">
       <h2 class="modal-title">Novo Agendamento</h2>
-      <button class="btn-close" (click)="cancel()" type="button">
+      <button class="btn-close" (click)="closeWithoutConfirm()" type="button">
         <mat-icon>close</mat-icon>
       </button>
     </div>
@@ -28,8 +28,8 @@
       <form [formGroup]="bookingForm">
         <!-- Step 1: Selecionar Serviços -->
         <div class="step-content" *ngIf="currentStep === 1">
-          <h3 class="step-heading">Selecione os Serviços</h3>
-          <p class="step-description">Escolha um ou mais serviços para o seu agendamento</p>
+          <h3 class="step-heading">Selecione o Serviço</h3>
+          <p class="step-description">Escolha o serviço desejado para o seu agendamento</p>
 
           <div class="services-grid" *ngIf="!isLoading">
             <div class="service-card" 
@@ -76,51 +76,8 @@
           </div>
         </div>
 
-        <!-- Step 2: Selecionar Profissional -->
+        <!-- Step 2: Selecionar Data e Hora -->
         <div class="step-content" *ngIf="currentStep === 2">
-          <h3 class="step-heading">Escolha o Profissional</h3>
-          <p class="step-description">Selecione o profissional que realizará seu atendimento</p>
-
-          <div class="professionals-list" *ngIf="!isLoading && availableProfessionals.length > 0">
-            <div class="professional-card" 
-                 *ngFor="let professional of availableProfessionals"
-                 [class.selected]="isProfessionalSelected(professional)"
-                 (click)="selectProfessional(professional)">
-              <div class="professional-avatar">
-                <mat-icon>person</mat-icon>
-              </div>
-              <div class="professional-info">
-                <h4 class="professional-name">{{ professional.nome }}</h4>
-                <p class="professional-email">{{ professional.email }}</p>
-                <p class="professional-specialty" *ngIf="professional.especialidade && professional.especialidade.length > 0">
-                  <mat-icon class="small-icon">business_center</mat-icon>
-                  {{ professional.especialidade.join(', ') }}
-                </p>
-                <p class="professional-phone" *ngIf="professional.telefone">
-                  <mat-icon class="small-icon">phone</mat-icon>
-                  {{ professional.telefone }}
-                </p>
-              </div>
-              <div class="professional-check" *ngIf="isProfessionalSelected(professional)">
-                <mat-icon>check_circle</mat-icon>
-              </div>
-            </div>
-          </div>
-
-          <div class="info-message" *ngIf="!isLoading && availableProfessionals.length === 0">
-            <mat-icon>info</mat-icon>
-            <p>Nenhum profissional oferece todos os serviços selecionados.</p>
-            <p>Por favor, volte e ajuste sua seleção de serviços.</p>
-          </div>
-
-          <div class="loading-state" *ngIf="isLoading">
-            <mat-icon class="spin">refresh</mat-icon>
-            <p>Carregando profissionais...</p>
-          </div>
-        </div>
-
-        <!-- Step 3: Selecionar Data e Hora -->
-        <div class="step-content" *ngIf="currentStep === 3">
           <h3 class="step-heading">Data e Horário</h3>
           <p class="step-description">Escolha a melhor data e horário para você</p>
 
@@ -145,7 +102,7 @@
 
             <!-- Seleção de Horário -->
             <div class="form-group">
-              <label>Horário Disponível</label>
+              <label>Horários Disponíveis</label>
               <div class="time-slots-grid" *ngIf="availableTimeSlots && availableTimeSlots.length > 0; else noTimeSlots">
                 <button type="button"
                         class="time-slot" 
@@ -177,7 +134,7 @@
         </div>
 
         <!-- Step 4: Confirmação -->
-        <div class="step-content" *ngIf="currentStep === 4">
+        <div class="step-content" *ngIf="currentStep === 3">
           <h3 class="step-heading">Confirme seu Agendamento</h3>
           <p class="step-description">Revise os detalhes antes de confirmar</p>
 
@@ -266,7 +223,7 @@
       <button type="button" 
               class="btn btn-secondary" 
               (click)="previousStep()"
-              *ngIf="currentStep > 1 && currentStep < 5"
+              *ngIf="currentStep > 1 && currentStep < 4"
               [disabled]="isLoading">
         <mat-icon>arrow_back</mat-icon>
         Voltar
@@ -275,7 +232,7 @@
       <button type="button" 
               class="btn btn-primary" 
               (click)="nextStep()"
-              *ngIf="currentStep < 4"
+              *ngIf="currentStep < 3"
               [disabled]="isLoading">
         Próximo
         <mat-icon>arrow_forward</mat-icon>
@@ -284,7 +241,7 @@
       <button type="button" 
               class="btn btn-success" 
               (click)="confirmBooking()"
-              *ngIf="currentStep === 4"
+              *ngIf="currentStep === 3"
               [disabled]="isLoading || !bookingForm.valid || successMessage">
         <mat-icon *ngIf="isLoading" class="spin">refresh</mat-icon>
         <mat-icon *ngIf="!isLoading">check</mat-icon>

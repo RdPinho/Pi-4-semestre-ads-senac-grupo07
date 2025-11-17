@@ -43,7 +43,9 @@ export class ClientDashboardComponent implements OnInit {
   showSummary = true;
   showAllAppointments = false;
   showBookingModal = false;
+  showCancelModal = false;
   selectedServiceForBooking?: Service;
+  apppointmentToCancel?: Appointment;
 
   // Serviços preferenciais - será calculado com base nos agendamentos
   preferredServices: (Service & { usageCount?: number })[] = [];
@@ -438,20 +440,22 @@ export class ClientDashboardComponent implements OnInit {
   }
 
   cancelAppointment(appointment: Appointment): void {
-    if (confirm('Deseja realmente cancelar este agendamento?')) {
-      this.appointmentService.cancelAppointment(appointment.id, 'Cancelado pelo cliente').subscribe({
-        next: (response) => {
-          if (response.success) {
-            console.log('Agendamento cancelado com sucesso');
-            this.loadDashboardData();
-          }
-        },
-        error: (error) => {
-          console.error('Erro ao cancelar agendamento:', error);
-          alert('Erro ao cancelar agendamento. Tente novamente.');
-        }
-      });
-    }
+    this.apppointmentToCancel = appointment;
+    this.showCancelModal = true;
+    // if (confirm('Deseja realmente cancelar este agendamento?')) {
+    //   this.appointmentService.cancelAppointment(appointment.id, 'Cancelado pelo cliente').subscribe({
+    //     next: (response) => {
+    //       if (response.success) {
+    //         console.log('Agendamento cancelado com sucesso');
+    //         this.loadDashboardData();
+    //       }
+    //     },
+    //     error: (error) => {
+    //       console.error('Erro ao cancelar agendamento:', error);
+    //       alert('Erro ao cancelar agendamento. Tente novamente.');
+    //     }
+    //   });
+    // }
   }
 
   quickBookService(service: Service): void {
@@ -467,6 +471,30 @@ export class ClientDashboardComponent implements OnInit {
   closeBookingModal(): void {
     this.showBookingModal = false;
     this.selectedServiceForBooking = undefined;
+  }
+
+  confirmCancelAppointment(): void {
+    if(this.apppointmentToCancel) {
+      this.appointmentService.cancelAppointment(this.apppointmentToCancel.id, 'Cancelado pelo cliente').subscribe({
+        next: (response) => {
+          if(response.success) {
+            console.log('Agendamento cancelado com sucesso');
+            this.loadDashboardData();
+            this.closeBookingModal();
+          }
+        },
+        error: (error) => {
+          console.error('Erro ao cancelar agendamento: ', error);
+          alert('Erro ao cancelar agendamento. Tente novamente.');
+          this.closeCancelModal();
+        }
+      });
+    }
+  }
+
+  closeCancelModal(): void {
+    this.showCancelModal = false;
+    this.apppointmentToCancel = undefined;
   }
 
   onBookingCompleted(): void {
