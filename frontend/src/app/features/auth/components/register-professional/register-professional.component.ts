@@ -69,9 +69,7 @@ export class RegisterProfessionalComponent {
         telefone: this.registerForm.value.telefone,
         senha: this.registerForm.value.senha,
         role: 'PROFISSIONAL',
-        especialidade: Array.isArray(this.registerForm.value.especialidade) 
-          ? this.registerForm.value.especialidade 
-          : [this.registerForm.value.especialidade],
+        // portfolioUrl: this.registerForm.value.portfolioUrl || null,
         ativo: true
       };
 
@@ -123,7 +121,6 @@ export class RegisterProfessionalComponent {
       nome: 'Nome',
       email: 'E-mail',
       telefone: 'Telefone',
-      especialidade: 'Especialidade',
       senha: 'Senha',
       confirmPassword: 'Confirmação de senha'
     };
